@@ -1,0 +1,333 @@
+[
+  {
+    "name": "Client",
+    "obfuscatedName": "client",
+    "fields": [
+      {
+        "name": "MouseHandler_instance",
+        "obfuscatedName": "av",
+        "owner": "Client",
+        "ownerObfuscatedName": "bu",
+        "descriptor": "Lbu;",
+        "isStatic": true
+      },
+      {
+        "name": "mouseLastPressedTimeMillis",
+        "obfuscatedName": "jq",
+        "owner": "Client",
+        "ownerObfuscatedName": "client",
+        "descriptor": "J",
+        "isStatic": true
+      },
+      {
+        "name": "heading",
+        "obfuscatedName": "to",
+        "owner": "Client",
+        "ownerObfuscatedName": "client",
+        "descriptor": "I",
+        "isStatic": true
+      }
+    ],
+    "methods": []
+  },
+  {
+    "name": "PacketBuffer",
+    "obfuscatedName": "xh",
+    "fields": [],
+    "methods": []
+  },
+  {
+    "name": "Buffer",
+    "obfuscatedName": "xz",
+    "fields": [
+      {
+        "name": "array",
+        "obfuscatedName": "ab",
+        "owner": "Buffer",
+        "ownerObfuscatedName": "xz",
+        "descriptor": "[I",
+        "isStatic": false
+      },
+      {
+        "name": "offset",
+        "obfuscatedName": "af",
+        "owner": "Buffer",
+        "ownerObfuscatedName": "xz",
+        "descriptor": "I",
+        "isStatic": false
+      }
+    ],
+    "methods": []
+  },
+  {
+    "name": "IsaacCipher",
+    "obfuscatedName": "dy",
+    "fields": [],
+    "methods": []
+  },
+  {
+    "name": "ClientPacket",
+    "obfuscatedName": "jj",
+    "fields": [
+      {
+        "name": "id",
+        "obfuscatedName": "ag",
+        "owner": "ClientPacket",
+        "ownerObfuscatedName": "jj",
+        "descriptor": "I",
+        "isStatic": false
+      },
+      {
+        "name": "length",
+        "obfuscatedName": "bp",
+        "owner": "ClientPacket",
+        "ownerObfuscatedName": "jj",
+        "descriptor": "I",
+        "isStatic": false
+      }
+    ],
+    "methods": []
+  },
+  {
+    "name": "ServerPacket",
+    "obfuscatedName": "me",
+    "fields": [
+      {
+        "name": "id",
+        "obfuscatedName": "ac",
+        "owner": "ServerPacket",
+        "ownerObfuscatedName": "me",
+        "descriptor": "I",
+        "isStatic": false
+      },
+      {
+        "name": "length",
+        "obfuscatedName": "aa",
+        "owner": "ServerPacket",
+        "ownerObfuscatedName": "me",
+        "descriptor": "I",
+        "isStatic": false
+      }
+    ],
+    "methods": []
+  },
+  {
+    "name": "PacketWriter",
+    "obfuscatedName": "nj",
+    "fields": [
+      {
+        "name": "isaacCipher",
+        "obfuscatedName": "bs",
+        "owner": "PacketWriter",
+        "ownerObfuscatedName": "nj",
+        "descriptor": "Ldy;",
+        "isStatic": false
+      },
+      {
+        "name": "serverPacketLength",
+        "obfuscatedName": "av",
+        "owner": "PacketWriter",
+        "ownerObfuscatedName": "nj",
+        "descriptor": "I",
+        "isStatic": false
+      }
+    ],
+    "methods": [
+      {
+        "name": "constructChat",
+        "obfuscatedName": "oj",
+        "owner": "PacketWriter",
+        "ownerObfuscatedName": "nj",
+        "descriptor": "(Ljava/lang/String;I)V",
+        "isStatic": false
+      }
+    ]
+  },
+  {
+    "name": "GameEngine",
+    "obfuscatedName": "bv",
+    "fields": [
+      {
+        "name": "graphicsGuard",
+        "obfuscatedName": "bp",
+        "owner": "GameEngine",
+        "ownerObfuscatedName": "bv",
+        "descriptor": "Z",
+        "isStatic": false
+      }
+    ],
+    "methods": []
+  },
+  {
+    "name": "Task",
+    "obfuscatedName": "dn",
+    "fields": [],
+    "methods": []
+  },
+  {
+    "name": "MouseHandler",
+    "obfuscatedName": "bu",
+    "fields": [
+      {
+        "name": "MouseHandler_lastPressedTimeMillis",
+        "obfuscatedName": "ay",
+        "owner": "MouseHandler",
+        "ownerObfuscatedName": "bu",
+        "descriptor": "J",
+        "isStatic": false
+      },
+      {
+        "name": "MouseHandler_x",
+        "obfuscatedName": "qb",
+        "owner": "MouseHandler",
+        "ownerObfuscatedName": "bu",
+        "descriptor": "I",
+        "isStatic": false
+      },
+      {
+        "name": "MouseHandler_y",
+        "obfuscatedName": "ax",
+        "owner": "MouseHandler",
+        "ownerObfuscatedName": "bu",
+        "descriptor": "I",
+        "isStatic": false
+      }
+    ],
+    "methods": []
+  },
+  {
+    "name": "AccountType",
+    "obfuscatedName": "ao",
+    "fields": [],
+    "methods": []
+  },
+  {
+    "name": "ObjectComposition",
+    "obfuscatedName": "ix",
+    "fields": [],
+    "methods": []
+  },
+  {
+    "name": "ItemComposition",
+    "obfuscatedName": "ic",
+    "fields": [
+      {
+        "name": "groundActions",
+        "obfuscatedName": "bg",
+        "owner": "ItemComposition",
+        "ownerObfuscatedName": "ic",
+        "descriptor": "[Ljava/lang/String;",
+        "isStatic": false
+      }
+    ],
+    "methods": []
+  },
+  {
+    "name": "Language",
+    "obfuscatedName": "fj",
+    "fields": [],
+    "methods": []
+  },
+  {
+    "name": "Login",
+    "obfuscatedName": "ay",
+    "fields": [
+      {
+        "name": "accountTypeCheck",
+        "obfuscatedName": "af",
+        "owner": "Login",
+        "ownerObfuscatedName": "ay",
+        "descriptor": "I",
+        "isStatic": true
+      },
+      {
+        "name": "legacyType",
+        "obfuscatedName": "bh",
+        "owner": "Login",
+        "ownerObfuscatedName": "ay",
+        "descriptor": "I",
+        "isStatic": true
+      },
+      {
+        "name": "jagexType",
+        "obfuscatedName": "as",
+        "owner": "Login",
+        "ownerObfuscatedName": "ay",
+        "descriptor": "I",
+        "isStatic": true
+      }
+    ],
+    "methods": [
+      {
+        "name": "setLoginIndex",
+        "obfuscatedName": "ac",
+        "owner": "Login",
+        "ownerObfuscatedName": "ay",
+        "descriptor": "(I)V",
+        "isStatic": true
+      }
+    ]
+  },
+  {
+    "name": "JagexAccounts",
+    "obfuscatedName": "ci",
+    "fields": [
+      {
+        "name": "JX_DISPLAY_NAME",
+        "obfuscatedName": "bb",
+        "owner": "JagexAccounts",
+        "ownerObfuscatedName": "ci",
+        "descriptor": "Ljava/lang/String;",
+        "isStatic": true
+      },
+      {
+        "name": "JX_CHARACTER_ID",
+        "obfuscatedName": "bx",
+        "owner": "JagexAccounts",
+        "ownerObfuscatedName": "ci",
+        "descriptor": "Ljava/lang/String;",
+        "isStatic": true
+      },
+      {
+        "name": "JX_SESSION_ID",
+        "obfuscatedName": "cj",
+        "owner": "JagexAccounts",
+        "ownerObfuscatedName": "ci",
+        "descriptor": "Ljava/lang/String;",
+        "isStatic": true
+      },
+      {
+        "name": "JX_REFRESH_TOKEN",
+        "obfuscatedName": "ba",
+        "owner": "JagexAccounts",
+        "ownerObfuscatedName": "ci",
+        "descriptor": "Ljava/lang/String;",
+        "isStatic": true
+      },
+      {
+        "name": "JX_ACCESS_TOKEN",
+        "obfuscatedName": "ce",
+        "owner": "JagexAccounts",
+        "ownerObfuscatedName": "ci",
+        "descriptor": "Ljava/lang/String;",
+        "isStatic": true
+      }
+    ],
+    "methods": []
+  },
+  {
+    "name": "RandomDat",
+    "obfuscatedName": "cl",
+    "fields": [
+      {
+        "name": "randomDat",
+        "obfuscatedName": "aa",
+        "owner": "RandomDat",
+        "ownerObfuscatedName": "cl",
+        "descriptor": "Ljava/io/File;",
+        "isStatic": true
+      }
+    ],
+    "methods": []
+  }
+]

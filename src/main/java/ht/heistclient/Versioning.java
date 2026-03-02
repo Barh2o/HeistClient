@@ -1,0 +1,97 @@
+package ht.heist.heistclient;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import ht.heist.HeistClient;
+import ht.heist.util.RuneliteConfigUtil;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
+
+public final class Versioning
+{
+    private Versioning() {
+        // Utility class - prevent instantiation
+    }
+
+    public static String getHeistClientVersion()
+    {
+        try {
+            final Manifest manifest = new Manifest(HeistClient.class.getClassLoader()
+                    .getResourceAsStream("META-INF/MANIFEST.MF"));
+            final Attributes attrs = manifest.getMainAttributes();
+            final String version = attrs.getValue("Implementation-Version");
+            if (version == null)
+            {
+                System.out.println("Could not find manifest, assuming dev environment");
+                return RuneliteConfigUtil.getRuneLiteVersion();
+            }
+            return version;
+        } catch (final IOException e) {
+            return "UNKNOWN";
+        }
+    }
+
+    public static String getLiveRuneliteVersion()
+    {
+        return RuneliteConfigUtil.getRuneLiteVersion();
+    }
+
+    public static boolean isRunningFromShadedJar() {
+        final String jarPath = HeistClient.class.getProtectionDomain()
+                .getCodeSource().getLocation().getPath();
+        return (jarPath.contains("shaded") || jarPath.endsWith(".jar")) && !isLaunchedFromIde();
+    }
+
+    public static boolean isLaunchedFromIde() {
+        String classpath = System.getProperty("java.class.path");
+        return classpath.contains("IntelliJ IDEA") || classpath.contains("idea_rt.jar") || classpath.contains("eclipse");
+    }
+
+    /**
+     * Fetches the latest HeistClient release tag from GitHub API.
+     * @return the latest release tag as a string
+     * @throws IOException if the API request fails
+     */
+    public static String getLatestHeistClientReleaseTag() throws IOException {
+        final String apiUrl = "https://api.github.com/repos/barh2o/HeistClient/releases/latest";
+        final HttpClient client = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(30))
+                .followRedirects(HttpClient.Redirect.NORMAL)
+                .build();
+
+        try {
+            final HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(apiUrl))
+                    .header("User-Agent", "HeistClient-Versioning/1.0")
+                    .header("Accept", "application/vnd.github.v3+json")
+                    .timeout(Duration.ofSeconds(30))
+                    .GET()
+                    .build();
+
+            final HttpResponse<String> response = client.send(request,
+                    HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 404) {
+                // No releases published yet — skip update check
+                return null;
+            }
+            if (response.statusCode() != 200) {
+                throw new IOException("GitHub API request failed: HTTP " + response.statusCode());
+            }
+
+            final JsonObject json = JsonParser.parseString(response.body()).getAsJsonObject();
+            return json.get("tag_name").getAsString();
+
+        } catch (final InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IOException("Request was interrupted", e);
+        }
+    }
+}

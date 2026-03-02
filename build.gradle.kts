@@ -11,7 +11,7 @@ plugins {
 val vitaVersion by extra("1")
 val runeliteVersion by extra("1.12.18")
 
-group = "com.tonic"
+group = "ht.heist"
 version = runeliteVersion + "_" + vitaVersion
 
 if (JavaVersion.current() != JavaVersion.VERSION_11) {
@@ -52,7 +52,7 @@ subprojects {
     apply(plugin = "java")
     apply(plugin = "maven-publish")
 
-    group = "com.tonic"
+    group = "ht.heist"
     version = rootProject.version
 
     publishing {
@@ -77,7 +77,7 @@ tasks.register("buildAndPublishAll") {
 tasks.register<Copy>("copySubmoduleJar") {
     dependsOn(":api:jar")
     from(project(":api").tasks.named<Jar>("jar").flatMap { it.archiveFile })
-    into("src/main/resources/com/tonic")
+    into("src/main/resources/ht/heist")
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     rename {
         "api.jarData"
@@ -89,7 +89,7 @@ tasks.register<Copy>("copySubmoduleJar") {
 tasks.register<Copy>("copySubmoduleJar2") {
     dependsOn(":plugins:jar")
     from(project(":plugins").tasks.named<Jar>("jar").flatMap { it.archiveFile })
-    into("src/main/resources/com/tonic")
+    into("src/main/resources/ht/heist")
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     rename {
         "plugins.jarData"
@@ -110,20 +110,21 @@ tasks {
 
     jar {
         manifest {
-            attributes(mutableMapOf("Main-Class" to "com.tonic.VitaLite"))
+            attributes(mutableMapOf("Main-Class" to "ht.heist.HeistClient"))
         }
     }
 
     shadowJar {
-        archiveClassifier.set("shaded")
+        archiveBaseName.set("HeistClient")
+        archiveClassifier.set("")
         isZip64 = true
 
         manifest {
             attributes(
-                "Main-Class" to "com.tonic.VitaLite",
+                "Main-Class" to "ht.heist.HeistClient",
                 "Implementation-Version" to project.version,
-                "Implementation-Title" to "VitaLite",
-                "Implementation-Vendor" to "Tonic",
+                "Implementation-Title" to "HeistClient",
+                "Implementation-Vendor" to "Heist",
                 "Multi-Release" to "true"
             )
         }
@@ -163,6 +164,44 @@ tasks {
             resource = "META-INF/services/java.nio.file.spi.FileSystemProvider"
         }
     }
+}
+
+// Run the MappingGenerator tool to produce src/main/resources/injector/mappings.json
+// Usage: .\gradlew generateMappings
+tasks.register<JavaExec>("generateMappings") {
+    group = "heist"
+    description = "Scans the injected-client JAR and generates mappings.json for the ASM injector"
+    dependsOn("compileJava")
+    classpath = sourceSets.main.get().runtimeClasspath
+    mainClass.set("ht.heist.util.MappingGenerator")
+    workingDir = projectDir
+}
+
+tasks.register<JavaExec>("mergeVitaMappings") {
+    group = "heist"
+    description = "Merges VitaLite mappings into the local mappings file"
+    dependsOn("compileJava")
+    classpath = sourceSets.main.get().runtimeClasspath
+    mainClass.set("ht.heist.util.MappingMerger")
+    workingDir = projectDir
+
+    // Pass the vitaMappings property as the first argument
+    if (project.hasProperty("vitaMappings")) {
+        args(project.property("vitaMappings").toString())
+    } else {
+        doFirst {
+            throw GradleException("You must provide the vitaMappings property. Usage: .\\gradlew mergeVitaMappings -PvitaMappings=path/to/vita/mappings.json")
+        }
+    }
+}
+
+tasks.register<JavaExec>("inspectJar") {
+    group = "heist"
+    description = "Diagnostic: prints class structure from the injected-client JAR"
+    dependsOn("compileJava")
+    classpath = sourceSets.main.get().runtimeClasspath
+    mainClass.set("ht.heist.util.JarInspector")
+    workingDir = projectDir
 }
 
 fun getRuneLiteArtifacts(): Map<String, String> {
@@ -259,16 +298,16 @@ tasks.register<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shad
     from(sourceSets.main.get().output)
     configurations = listOf(project.configurations.runtimeClasspath.get())
 
-    archiveBaseName.set("VitaLite")
+    archiveBaseName.set("HeistClient")
     archiveClassifier.set("release-shaded")
     isZip64 = true
 
     manifest {
         attributes(
-            "Main-Class" to "com.tonic.VitaLite",
+            "Main-Class" to "ht.heist.HeistClient",
             "Implementation-Version" to project.version,
-            "Implementation-Title" to "VitaLite",
-            "Implementation-Vendor" to "Tonic",
+            "Implementation-Title" to "HeistClient",
+            "Implementation-Vendor" to "Heist",
             "Multi-Release" to "true"
         )
     }
@@ -293,11 +332,11 @@ tasks.register<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shad
         isInApiPackage && path !in whitelist
     }
 
-    //exclude("com/tonic/services/profiler/**")
-    exclude("com/tonic/services/pathfinder/ui/**")
-    exclude("com/tonic/injector/**")
-    exclude("com/tonic/mixin/**")
-    exclude("com/tonic/rlmixin/**")
+    //exclude("ht/heist/services/profiler/**")
+    exclude("ht/heist/services/pathfinder/ui/**")
+    exclude("ht/heist/injector/**")
+    exclude("ht/heist/mixin/**")
+    exclude("ht/heist/rlmixin/**")
     exclude("**/mappings.json")
 
     transform(com.github.jengelman.gradle.plugins.shadow.transformers.AppendingTransformer::class.java) {
@@ -316,13 +355,13 @@ tasks.register<Zip>("packageRelease") {
 
     val shadowJarTask = tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJarRelease")
 
-    archiveBaseName.set("VitaLite")
+    archiveBaseName.set("HeistClient")
     archiveVersion.set(project.version.toString())
     archiveClassifier.set("")
     destinationDirectory.set(layout.buildDirectory.dir("libs"))
 
     from(shadowJarTask.flatMap { it.archiveFile }) {
-        rename { "VitaLite.jar" }
+        rename { "HeistClient.jar" }
     }
 
     // Unix shell scripts - convert to LF line endings for Linux/Mac compatibility
@@ -361,7 +400,7 @@ tasks.register<Exec>("publishRelease") {
     val title = "${tag}-subrev"
     val body = "# ${tag}\n" +
             "- updated collision maps";
-    val zipFile = layout.buildDirectory.file("libs/VitaLite-${project.version}.zip").get().asFile
+    val zipFile = layout.buildDirectory.file("libs/HeistClient-${project.version}.zip").get().asFile
 
     doFirst {
         if (!zipFile.exists()) {

@@ -2,7 +2,7 @@ plugins {
     id("java")
 }
 
-group = "com.tonic.plugins"
+group = "ht.heist.plugins"
 version = "1.11.19.1"
 
 repositories {

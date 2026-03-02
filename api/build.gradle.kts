@@ -5,7 +5,7 @@ plugins {
     id("java")
 }
 
-group = "com.tonic"
+group = "ht.heist"
 version = rootProject.version
 
 repositories {

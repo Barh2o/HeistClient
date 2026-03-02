@@ -7,7 +7,7 @@ plugins {
     id("maven-publish")
 }
 
-group = "com.tonic"
+group = "ht.heist"
 version = rootProject.version
 
 repositories {
@@ -32,6 +32,7 @@ dependencies {
     implementation("org.antlr:antlr4:4.13.1")
     implementation("com.github.vlsi.mxgraph:jgraphx:4.2.2")
     implementation("org.jfree:jfreechart:1.5.4")
+    implementation("org.slf4j:slf4j-api:2.0.13")
 }
 
 val apiFilePatterns = mapOf(

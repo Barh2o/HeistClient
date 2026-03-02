@@ -1,0 +1,10 @@
+package ht.heist.bootstrap.beans;
+
+import lombok.Data;
+
+@Data
+public class Platform
+{
+    private String name;
+    private String arch;
+}
