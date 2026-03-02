@@ -13,13 +13,11 @@ import java.util.List;
 import java.awt.*;
 import java.util.Set;
 
-public class BreakSettingsPanel extends JPanel
-{
+public class BreakSettingsPanel extends JPanel {
     private final BreakHandler breakHandler = RuneLite.getInjector().getInstance(BreakHandler.class);
     private final ConfigManager configManager = breakHandler.getConfigManager();
 
-    public BreakSettingsPanel()
-    {
+    public BreakSettingsPanel() {
         setLayout(new BorderLayout());
         setOpaque(false);
 
@@ -30,12 +28,12 @@ public class BreakSettingsPanel extends JPanel
         tabs.addTab("Timing", buildTimingTab());
         tabs.addTab("Account", buildAccountTab());
         tabs.addTab("World", buildWorldTab());
+        tabs.addTab("Fatigue", buildFatigueTab());
 
         add(tabs, BorderLayout.CENTER);
     }
 
-    private JComponent buildTimingTab()
-    {
+    private JComponent buildTimingTab() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setOpaque(false);
         panel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -57,20 +55,17 @@ public class BreakSettingsPanel extends JPanel
         addRow(panel, gc, 3, "Min Duration (m):", minDuration);
         addRow(panel, gc, 4, "Max Duration (m):", maxDuration);
 
-        minBetween.addChangeListener(e ->
-                configManager.setProperty(Property.MIN_BETWEEN.key(), minBetween.getValue()));
-        maxBetween.addChangeListener(e ->
-                configManager.setProperty(Property.MAX_BETWEEN.key(), maxBetween.getValue()));
-        minDuration.addChangeListener(e ->
-                configManager.setProperty(Property.MIN_DURATION.key(), minDuration.getValue()));
-        maxDuration.addChangeListener(e ->
-                configManager.setProperty(Property.MAX_DURATION.key(), maxDuration.getValue()));
+        minBetween.addChangeListener(e -> configManager.setProperty(Property.MIN_BETWEEN.key(), minBetween.getValue()));
+        maxBetween.addChangeListener(e -> configManager.setProperty(Property.MAX_BETWEEN.key(), maxBetween.getValue()));
+        minDuration
+                .addChangeListener(e -> configManager.setProperty(Property.MIN_DURATION.key(), minDuration.getValue()));
+        maxDuration
+                .addChangeListener(e -> configManager.setProperty(Property.MAX_DURATION.key(), maxDuration.getValue()));
 
         return wrapNorth(panel);
     }
 
-    private JComponent buildAccountTab()
-    {
+    private JComponent buildAccountTab() {
         JPanel p = new JPanel(new GridBagLayout());
         p.setOpaque(false);
         p.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -91,7 +86,10 @@ public class BreakSettingsPanel extends JPanel
         useProfiles.setForeground(Color.WHITE);
 
         GridBagConstraints gFull = (GridBagConstraints) gc.clone();
-        gFull.gridx = 0; gFull.gridy = row++; gFull.gridwidth = 2; gFull.weightx = 1.0;
+        gFull.gridx = 0;
+        gFull.gridy = row++;
+        gFull.gridwidth = 2;
+        gFull.weightx = 1.0;
         p.add(useProfiles, gFull);
 
         JPanel cardHolder = new JPanel(new CardLayout());
@@ -107,10 +105,10 @@ public class BreakSettingsPanel extends JPanel
         addRow(manualPanel, gMan, 0, "Username:", username);
         addRow(manualPanel, gMan, 1, "Password:", password);
 
-        username.getDocument().addDocumentListener(onChange(() ->
-                configManager.setProperty(userKey, username.getText())));
-        password.getDocument().addDocumentListener(onChange(() ->
-                configManager.setProperty(passKey, new String(password.getPassword()))));
+        username.getDocument()
+                .addDocumentListener(onChange(() -> configManager.setProperty(userKey, username.getText())));
+        password.getDocument().addDocumentListener(
+                onChange(() -> configManager.setProperty(passKey, new String(password.getPassword()))));
 
         username.setMaximumSize(new Dimension(Integer.MAX_VALUE, username.getPreferredSize().height));
         password.setMaximumSize(new Dimension(Integer.MAX_VALUE, password.getPreferredSize().height));
@@ -152,8 +150,7 @@ public class BreakSettingsPanel extends JPanel
             boolean use = useProfiles.isSelected();
             configManager.setProperty(modeKey, use);
 
-            if (use)
-            {
+            if (use) {
                 ProfilesSession profilesSession = ProfilesSession.getInstance();
                 profilesSession.loadProfilesFromFile();
             }
@@ -162,7 +159,11 @@ public class BreakSettingsPanel extends JPanel
         });
 
         GridBagConstraints gCards = (GridBagConstraints) gc.clone();
-        gCards.gridx = 0; gCards.gridy = row; gCards.gridwidth = 2; gCards.weightx = 1.0; gCards.fill = GridBagConstraints.HORIZONTAL;
+        gCards.gridx = 0;
+        gCards.gridy = row;
+        gCards.gridwidth = 2;
+        gCards.weightx = 1.0;
+        gCards.fill = GridBagConstraints.HORIZONTAL;
         p.add(cardHolder, gCards);
 
         return wrapNorth(p);
@@ -187,9 +188,7 @@ public class BreakSettingsPanel extends JPanel
         return profileNames;
     }
 
-
-    private JComponent buildWorldTab()
-    {
+    private JComponent buildWorldTab() {
         JPanel p = new JPanel();
         p.setOpaque(false);
         p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
@@ -224,8 +223,42 @@ public class BreakSettingsPanel extends JPanel
         return p;
     }
 
-    private GridBagConstraints gc()
-    {
+    private JComponent buildFatigueTab() {
+        JPanel p = new JPanel(new GridBagLayout());
+        p.setOpaque(false);
+        p.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        GridBagConstraints gc = gc();
+        int row = 0;
+
+        addSectionLabel(p, gc, row++, "Fatigue Simulator");
+
+        JCheckBox enabled = createCheckbox(Property.FATIGUE_ENABLED.key(), "Enable Fatigue Scaling", true);
+        GridBagConstraints gFull = (GridBagConstraints) gc.clone();
+        gFull.gridx = 0;
+        gFull.gridy = row++;
+        gFull.gridwidth = 2;
+        p.add(enabled, gFull);
+
+        JSpinner hoursToMax = createSpinner(Property.FATIGUE_HOURS_TO_MAX.key(), 8, 1, 24, 1);
+        JSpinner minPlayPct = createSpinner(Property.FATIGUE_MIN_PLAY_PCT.key(), 50, 10, 100, 5);
+        JSpinner maxBreakPct = createSpinner(Property.FATIGUE_MAX_BREAK_PCT.key(), 50, 0, 300, 5);
+
+        addRow(p, gc, row++, "Hours to Max Fatigue:", hoursToMax);
+        addRow(p, gc, row++, "Min Play Duration (%):", minPlayPct);
+        addRow(p, gc, row++, "Max Break Increase (%):", maxBreakPct);
+
+        hoursToMax.addChangeListener(
+                e -> configManager.setProperty(Property.FATIGUE_HOURS_TO_MAX.key(), hoursToMax.getValue()));
+        minPlayPct.addChangeListener(
+                e -> configManager.setProperty(Property.FATIGUE_MIN_PLAY_PCT.key(), minPlayPct.getValue()));
+        maxBreakPct.addChangeListener(
+                e -> configManager.setProperty(Property.FATIGUE_MAX_BREAK_PCT.key(), maxBreakPct.getValue()));
+
+        return wrapNorth(p);
+    }
+
+    private GridBagConstraints gc() {
         GridBagConstraints gc = new GridBagConstraints();
         gc.insets = new Insets(4, 2, 4, 2);
         gc.anchor = GridBagConstraints.WEST;
@@ -234,16 +267,14 @@ public class BreakSettingsPanel extends JPanel
         return gc;
     }
 
-    private JPanel wrapNorth(JComponent inner)
-    {
+    private JPanel wrapNorth(JComponent inner) {
         JPanel wrap = new JPanel(new BorderLayout());
         wrap.setOpaque(false);
         wrap.add(inner, BorderLayout.NORTH);
         return wrap;
     }
 
-    private void addSectionLabel(JPanel panel, GridBagConstraints gc, int row, String text)
-    {
+    private void addSectionLabel(JPanel panel, GridBagConstraints gc, int row, String text) {
         GridBagConstraints g = (GridBagConstraints) gc.clone();
         g.gridx = 0;
         g.gridy = row;
@@ -255,8 +286,7 @@ public class BreakSettingsPanel extends JPanel
     }
 
     private void addRow(JPanel panel, GridBagConstraints gcBase,
-                        int row, String label, JComponent field)
-    {
+            int row, String label, JComponent field) {
         GridBagConstraints gc = (GridBagConstraints) gcBase.clone();
         gc.gridx = 0;
         gc.gridy = row;
@@ -273,8 +303,7 @@ public class BreakSettingsPanel extends JPanel
         panel.add(field, gc);
     }
 
-    private JLabel createHeader(String text)
-    {
+    private JLabel createHeader(String text) {
         JLabel l = new JLabel(text);
         l.setForeground(Color.WHITE);
         l.setFont(l.getFont().deriveFont(Font.BOLD, 12f));
@@ -282,8 +311,7 @@ public class BreakSettingsPanel extends JPanel
         return l;
     }
 
-    private JSpinner createSpinner(String key, int def, int min, int max, int step)
-    {
+    private JSpinner createSpinner(String key, int def, int min, int max, int step) {
         int current = configManager.getIntOrDefault(key, def);
         SpinnerNumberModel model = new SpinnerNumberModel(current, min, max, step);
         JSpinner spinner = new JSpinner(model);
@@ -291,8 +319,7 @@ public class BreakSettingsPanel extends JPanel
         return spinner;
     }
 
-    private JCheckBox createCheckbox(String key, String label, boolean def)
-    {
+    private JCheckBox createCheckbox(String key, String label, boolean def) {
         boolean val = configManager.getBooleanOrDefault(key, def);
         JCheckBox box = new JCheckBox(label, val);
         box.setOpaque(false);
@@ -301,8 +328,7 @@ public class BreakSettingsPanel extends JPanel
         return box;
     }
 
-    private static javax.swing.event.DocumentListener onChange(Runnable r)
-    {
+    private static javax.swing.event.DocumentListener onChange(Runnable r) {
         return new javax.swing.event.DocumentListener() {
             public void insertUpdate(DocumentEvent e) {
                 r.run();

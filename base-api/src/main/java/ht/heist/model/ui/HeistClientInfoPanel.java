@@ -12,8 +12,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class HeistClientInfoPanel extends VPluginPanel
-{
+public class HeistClientInfoPanel extends VPluginPanel {
     private static final Color BACKGROUND_GRADIENT_START = new Color(45, 45, 50);
     private static final Color BACKGROUND_GRADIENT_END = new Color(35, 35, 40);
     private static final Color ACCENT_COLOR = new Color(64, 169, 211);
@@ -25,8 +24,7 @@ public class HeistClientInfoPanel extends VPluginPanel
     private static final Color CARD_BACKGROUND = new Color(55, 55, 60);
     private static final Color SEPARATOR_COLOR = new Color(70, 70, 75);
 
-    public HeistClientInfoPanel()
-    {
+    public HeistClientInfoPanel() {
         super(true);
 
         JPanel contentPanel = new JPanel() {
@@ -38,8 +36,7 @@ public class HeistClientInfoPanel extends VPluginPanel
 
                 GradientPaint gradient = new GradientPaint(
                         0, 0, BACKGROUND_GRADIENT_START,
-                        0, getHeight(), BACKGROUND_GRADIENT_END
-                );
+                        0, getHeight(), BACKGROUND_GRADIENT_END);
                 g2d.setPaint(gradient);
                 g2d.fillRect(0, 0, getWidth(), getHeight());
             }
@@ -59,7 +56,7 @@ public class HeistClientInfoPanel extends VPluginPanel
         titlePanel.add(Box.createVerticalStrut(10));
         titlePanel.add(titleLabel);
 
-        JLabel taglineLabel = new JLabel("Enhanced RuneLite Experience");
+        JLabel taglineLabel = new JLabel("GP so free you'd think were stealing it");
         taglineLabel.setFont(new Font("Segoe UI", Font.ITALIC, 11));
         taglineLabel.setForeground(ACCENT_COLOR);
         taglineLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -78,8 +75,7 @@ public class HeistClientInfoPanel extends VPluginPanel
         versionBadge.setForeground(ACCENT_COLOR);
         versionBadge.setBorder(new CompoundBorder(
                 BorderFactory.createLineBorder(ACCENT_COLOR, 1),
-                new EmptyBorder(2, 8, 2, 8)
-        ));
+                new EmptyBorder(2, 8, 2, 8)));
         versionPanel.add(versionBadge);
         contentPanel.add(versionPanel);
 
@@ -87,26 +83,7 @@ public class HeistClientInfoPanel extends VPluginPanel
         contentPanel.add(createSeparator());
         contentPanel.add(Box.createVerticalStrut(15));
 
-        JLabel connectLabel = new JLabel("Connect & Contribute");
-        connectLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        connectLabel.setForeground(HEADER_COLOR);
-        connectLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        contentPanel.add(connectLabel);
-        contentPanel.add(Box.createVerticalStrut(10));
-
-        contentPanel.add(createLinkButton(
-                "GitHub",
-                "View Source Code",
-                "https://github.ht/heist-Box/HeistClient"
-        ));
-
-        contentPanel.add(Box.createVerticalStrut(10));
-
-        contentPanel.add(createLinkButton(
-                "Discord",
-                "Join Community",
-                "https://discord.gg/A4S4Fh4gzr"
-        ));
+        // Connect & Contribute section removed
 
         JPanel authorCard = createCard();
         authorCard.setLayout(new BoxLayout(authorCard, BoxLayout.Y_AXIS));
@@ -122,7 +99,7 @@ public class HeistClientInfoPanel extends VPluginPanel
         authorCard.add(Box.createVerticalStrut(5));
         authorCard.add(authorTitle);
 
-        JLabel authorName = new JLabel("TonicBox");
+        JLabel authorName = new JLabel("Hoo");
         authorName.setFont(new Font("Segoe UI", Font.BOLD, 14));
         authorName.setForeground(HEADER_COLOR);
         authorName.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -150,8 +127,7 @@ public class HeistClientInfoPanel extends VPluginPanel
         card.setBackground(CARD_BACKGROUND);
         card.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(SEPARATOR_COLOR, 1),
-                new EmptyBorder(10, 15, 10, 15)
-        ));
+                new EmptyBorder(10, 15, 10, 15)));
         card.setMaximumSize(new Dimension(PANEL_WIDTH - 40, 100));
         return card;
     }
@@ -167,9 +143,9 @@ public class HeistClientInfoPanel extends VPluginPanel
                 g2d.setColor(ACCENT_GLOW);
                 int glowRadius = 20;
                 for (int i = glowRadius; i > 0; i--) {
-                    float alpha = (float)(glowRadius - i) / glowRadius * 0.3f;
-                    g2d.setColor(new Color(64, 169, 211, (int)(alpha * 255)));
-                    g2d.fillRoundRect(i/2, i/2, getWidth() - i, getHeight() - i, 15, 15);
+                    float alpha = (float) (glowRadius - i) / glowRadius * 0.3f;
+                    g2d.setColor(new Color(64, 169, 211, (int) (alpha * 255)));
+                    g2d.fillRoundRect(i / 2, i / 2, getWidth() - i, getHeight() - i, 15, 15);
                 }
 
                 g2d.setColor(CARD_BACKGROUND);
@@ -247,8 +223,7 @@ public class HeistClientInfoPanel extends VPluginPanel
                             HeistClientInfoPanel.this,
                             "Failed to open link: " + url,
                             "Error",
-                            JOptionPane.ERROR_MESSAGE
-                    );
+                            JOptionPane.ERROR_MESSAGE);
                 }
             }
 

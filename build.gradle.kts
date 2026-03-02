@@ -204,6 +204,61 @@ tasks.register<JavaExec>("inspectJar") {
     workingDir = projectDir
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Injector pipeline task
+// Runs Main with --runInjector which:
+//   1. Downloads / caches the RuneLite + gamepack jars (just like normal launch)
+//   2. Calls PatchGenerator.enableCapture()
+//   3. Runs Injector.patch()  (gamepack mixins → ht/heist/mixins)
+//   4. Runs RLInjector.patch() (RuneLite mixins → ht/heist/rlmixins)
+//   5. Calls PatchGenerator.writePatchesZip("src/main/resources")
+//      → overwrites src/main/resources/ht/heist/patches.zip
+//   6. Calls PatchGenerator.writePatchesZip("src/main/resources") for com/tonic too
+//
+// Usage:   .\gradlew injectPatches
+// Then:    .\gradlew shadowJar       (rebuild jar with new patches embedded)
+// Or:      .\gradlew buildWithPatches  (does both in one command)
+// ─────────────────────────────────────────────────────────────────────────────
+tasks.register<JavaExec>("injectPatches") {
+    group = "heist"
+    description = "Runs the ASM injection pipeline to regenerate patches.zip from current mixin sources"
+    dependsOn("compileJava", "copySubmoduleJar", "copySubmoduleJar2")
+    classpath = sourceSets.main.get().runtimeClasspath
+    mainClass.set("ht.heist.heistclient.Main")
+    workingDir = projectDir
+    args = listOf("--safeLaunch", "--runInjector")
+
+    // Increase heap because the injector loads ~17K gamepack classes into memory
+    jvmArgs = listOf(
+        "-Xmx2g",
+        "-Xms512m",
+        "-XX:+UseSerialGC"
+    )
+
+    doFirst {
+        println("""
+            ╔══════════════════════════════════════════════════════════════╗
+            ║  Heist Injector Pipeline                                     ║
+            ║  This will download RuneLite artifacts if not cached,        ║
+            ║  apply all mixins, and regenerate patches.zip.               ║
+            ║  Expected runtime: 30s – 3 min (first run downloads jars)   ║
+            ╚══════════════════════════════════════════════════════════════╝
+        """.trimIndent())
+    }
+
+    doLast {
+        println("[Heist] patches.zip regenerated. Run 'gradlew shadowJar' to rebuild the client jar.")
+    }
+}
+
+// Convenience: regenerate patches AND rebuild the fat jar in one command
+tasks.register("buildWithPatches") {
+    group = "heist"
+    description = "Full build: regenerate patches from mixins, then rebuild the client jar"
+    dependsOn("injectPatches")
+    finalizedBy("shadowJar")
+}
+
 fun getRuneLiteArtifacts(): Map<String, String> {
     val json = URL("https://static.runelite.net/bootstrap.json").readText()
     val jsonSlurper = JsonSlurper()

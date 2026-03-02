@@ -1,5 +1,5 @@
-# VitaLite
-VitaLite is a launcher for RuneLite that offers additional features and customization options.
+# HeistClient
+HeistClient is a launcher for RuneLite that offers additional features and customization options.
 - Provides access to aditional GamePack functionalities
 - Robust built-in API SDK for plugin development
 - Builtin plugins including profiles which allows you to use your Jagex Accounts directly from the client and swap between
@@ -14,7 +14,7 @@ VitaLite is a launcher for RuneLite that offers additional features and customiz
 
 ## General User Release
 
-[VitaLite Launcher](https://github.com/Tonic-Box/VitaLauncher/releases)
+[HeistClient Launcher](https://github.com/Hoo/HeistClient/releases)
 
 [Client QoL User Features](./docs/FEATURES.md)
 
@@ -29,7 +29,7 @@ VitaLite is a launcher for RuneLite that offers additional features and customiz
 **Requirements:** Jdk 11
 - Run the `SyncRuneliteApi` gradle task to download the latest RuneLite API _(Only need to run Once each rev update and first time you build)_
 1. Run the `buildAndPublishAll` gradle task to build the artifacts and setup the main module correctly
-2. Run the `com.tonic.VitaLite` main class to launch the client
+2. Run the `ht.HeistClient` main class to launch the client
 
 ## Contributing
 1. Fork the repository
@@ -37,6 +37,9 @@ VitaLite is a launcher for RuneLite that offers additional features and customiz
 3. Make your changes
 4. Test thoroughly
 5. Submit a pull request
+
+## HeistClient
+Created by Hoo
 
 ## Client Command Line Options
 | Option         | Type    | Description                                                                                       |
@@ -56,6 +59,6 @@ VitaLite is a launcher for RuneLite that offers additional features and customiz
 
 ## Disclaimer
 
-VitaLite is a third-party loader for RuneLite. Use at your own risk. The developers are not responsible for any consequences resulting from the use of this software.
+HeistClient is a third-party loader for RuneLite. Use at your own risk. The developers are not responsible for any consequences resulting from the use of this software.
 
-## [Buy me a coffee](https://ko-fi.com/tonicbox)
+## [Buy me a coffee](https://ko-fi.com/Hoo)

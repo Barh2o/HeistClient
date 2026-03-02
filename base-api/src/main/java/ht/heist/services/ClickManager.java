@@ -23,8 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * Manages mouse click strategies and click packet generation.
  * Supports realistic mouse movement via trajectory-based generation.
  */
-public class ClickManager
-{
+public class ClickManager {
     @Getter
     private static final AtomicReference<Point> point = new AtomicReference<>(new Point(-1, -1));
     private static volatile Shape shape = null;
@@ -60,23 +59,22 @@ public class ClickManager
 
     /**
      * Sets the target point for static clicking.
+     * 
      * @param x the x-coordinate
      * @param y the y-coordinate
      */
-    public static void setPoint(int x, int y)
-    {
+    public static void setPoint(int x, int y) {
         point.set(new Point(x, y));
     }
 
     /**
      * Queues a shape for controlled clicking.
+     * 
      * @param shape the shape to click within
      */
-    public static void queueClickBox(Shape shape)
-    {
+    public static void queueClickBox(Shape shape) {
         Static.invoke(() -> {
-            if(shape == null)
-            {
+            if (shape == null) {
                 ClickManager.shape = null;
                 return;
             }
@@ -88,16 +86,14 @@ public class ClickManager
     /**
      * Clears the currently set click box.
      */
-    public static void clearClickBox()
-    {
+    public static void clearClickBox() {
         shape = null;
     }
 
     /**
      * Calculates Euclidean distance between two points.
      */
-    private static double distance(Point p1, Point p2)
-    {
+    private static double distance(Point p1, Point p2) {
         int dx = p2.x - p1.x;
         int dy = p2.y - p1.y;
         return Math.sqrt(dx * dx + dy * dy);
@@ -107,12 +103,10 @@ public class ClickManager
      * Generates a random entry point on the edge of the viewport.
      * Simulates mouse entering the area from outside.
      */
-    private static Point generateEntryPoint(Rectangle viewport)
-    {
+    private static Point generateEntryPoint(Rectangle viewport) {
         int edge = random.nextInt(4); // 0=top, 1=right, 2=bottom, 3=left
 
-        switch (edge)
-        {
+        switch (edge) {
             case 0:
                 return new Point(viewport.x + random.nextInt(viewport.width), viewport.y);
             case 1:
@@ -128,17 +122,12 @@ public class ClickManager
     /**
      * Checks if realistic movement should be used based on training quality.
      */
-    private static boolean shouldUseRealisticMovement()
-    {
-        try
-        {
+    private static boolean shouldUseRealisticMovement() {
+        try {
             int trajectoryCount = TrajectoryService.getDatabase().getTrajectoryCount();
             return trajectoryCount >= 50;
-        }
-        catch (Exception e)
-        {
-            if (!movementLogged)
-            {
+        } catch (Exception e) {
+            if (!movementLogged) {
                 Logger.warn("Movement quality check failed, using teleport: " + e.getMessage());
                 movementLogged = true;
             }
@@ -154,13 +143,11 @@ public class ClickManager
      * @return Cached or newly created API
      * @throws IllegalStateException if generator cannot be created
      */
-    private static MouseRecorderAPI getAPI() throws IllegalStateException
-    {
+    private static MouseRecorderAPI getAPI() throws IllegalStateException {
         long now = System.currentTimeMillis();
 
         if (cachedGenerator == null || cachedAPI == null ||
-            (now - lastGeneratorRefresh) > GENERATOR_REFRESH_INTERVAL_MS)
-        {
+                (now - lastGeneratorRefresh) > GENERATOR_REFRESH_INTERVAL_MS) {
             cachedGenerator = TrajectoryService.createGenerator();
             cachedAPI = new MouseRecorderAPI(cachedGenerator);
             lastGeneratorRefresh = now;
@@ -171,56 +158,51 @@ public class ClickManager
 
     /**
      * Generates realistic mouse movement samples and feeds them into the buffer.
-     * The buffer will send accumulated samples when forceFlush() is called (before each click).
+     * The buffer will send accumulated samples when forceFlush() is called (before
+     * each click).
      *
      * Skips movement generation if:
      * - Distance too short (< 15px)
-     * - Time since last click too short (< 150ms) - prevents inhumanly fast movements
+     * - Time since last click too short (< 150ms) - prevents inhumanly fast
+     * movements
      * - Training quality too low (< 50%)
      *
-     * @param startX Starting X coordinate
-     * @param startY Starting Y coordinate
+     * @param startX  Starting X coordinate
+     * @param startY  Starting Y coordinate
      * @param targetX Target X coordinate
      * @param targetY Target Y coordinate
      */
-    private static void generateMovement(int startX, int startY, int targetX, int targetY)
-    {
-        try
-        {
+    private static void generateMovement(int startX, int startY, int targetX, int targetY) {
+        try {
             long now = System.currentTimeMillis();
-            if (lastClickTime > 0)
-            {
+            if (lastClickTime > 0) {
                 long timeSinceLastClick = now - lastClickTime;
-                if (timeSinceLastClick < MIN_TIME_FOR_MOVEMENT_MS)
-                {
+                if (timeSinceLastClick < MIN_TIME_FOR_MOVEMENT_MS) {
                     return;
                 }
             }
 
             double dist = distance(new Point(startX, startY), new Point(targetX, targetY));
-            if (dist < MIN_DISTANCE_FOR_MOVEMENT || !shouldUseRealisticMovement())
-            {
+            if (dist < MIN_DISTANCE_FOR_MOVEMENT || !shouldUseRealisticMovement()) {
                 return;
             }
 
             MouseRecorderAPI api = getAPI();
 
             // Generate movement path
-            List<MouseDataPoint> samples = new ArrayList<>(api.getGenerator().generate(startX, startY, targetX, targetY).getPoints());
-            if (!samples.isEmpty())
-            {
+            List<MouseDataPoint> samples = new ArrayList<>(
+                    api.getGenerator().generate(startX, startY, targetX, targetY).getPoints());
+            if (!samples.isEmpty()) {
                 // Visualize the generated path immediately
-                MovementVisualization.recordMovement(samples, MovementVisualization.MovementSource.TRAJECTORY_GENERATED);
+                MovementVisualization.recordMovement(samples,
+                        MovementVisualization.MovementSource.TRAJECTORY_GENERATED);
 
                 // Feed path to buffer for playback over time
                 // The buffer's sampling thread will follow this path at 50ms intervals
                 movementBuffer.playPath(samples);
             }
-        }
-        catch (Exception e)
-        {
-            if (!movementLogged)
-            {
+        } catch (Exception e) {
+            if (!movementLogged) {
                 Logger.warn("Movement generation failed: " + e.getMessage());
                 movementLogged = true;
             }
@@ -231,23 +213,19 @@ public class ClickManager
      * Starts the movement buffer's background sampling.
      * Should be called when movement spoofing is enabled.
      */
-    public static void startMovementSampling()
-    {
+    public static void startMovementSampling() {
         movementBuffer.start();
     }
 
     /**
      * Stops the movement buffer's background sampling.
      */
-    public static void stopMovementSampling()
-    {
+    public static void stopMovementSampling() {
         movementBuffer.stop();
     }
 
-    public static List<ClickPacket> releaseClicks()
-    {
-        synchronized (LOCK)
-        {
+    public static List<ClickPacket> releaseClicks() {
+        synchronized (LOCK) {
             var out = new ArrayList<>(clickPackets);
             clickPackets.clear();
             return out;
@@ -257,36 +235,44 @@ public class ClickManager
     /**
      * Sends a click packet using the current strategy.
      */
-    public static void click()
-    {
+    public static void click() {
         click(ClickType.GENERIC);
     }
 
     /**
-     * Sends a click packet using the current strategy and specified interaction type.
-     * For RANDOM and CONTROLLED strategies, generates realistic mouse movement if training quality is sufficient.
+     * Sends a click packet using the current strategy and specified interaction
+     * type.
+     * For RANDOM and CONTROLLED strategies, generates realistic mouse movement if
+     * training quality is sufficient.
+     * 
      * @param packetInteractionType the type of interaction for the click packet
      */
-    public static void click(ClickType packetInteractionType)
-    {
+    public static void click(ClickType packetInteractionType) {
         Static.invoke(() -> {
             TClient client = Static.getClient();
             int px = point.get().x;
             int py = point.get().y;
             ClickStrategy strategy = Static.getVitaConfig().getClickStrategy();
-            switch (strategy)
-            {
+            switch (strategy) {
                 case STATIC:
                     clearClickBox();
                     // Flush movement buffer before click (matches natural client behavior)
                     movementBuffer.forceFlush();
+
+                    // Human-like dwell (settle) time before click (25-85ms)
+                    if (Static.getVitaConfig().shouldSpoofMouseMovemnt()) {
+                        try {
+                            Thread.sleep(25 + random.nextInt(60));
+                        } catch (InterruptedException ignored) {
+                        }
+                    }
+
                     defaultStaticClickPacket(packetInteractionType, client, px, py);
                     break;
                 case RANDOM:
                     clearClickBox();
                     Rectangle r = Static.getRuneLite().getGameApplet().getViewportArea();
-                    if(r == null)
-                    {
+                    if (r == null) {
                         Logger.warn("Viewport area is null, defaulting to STATIC.");
                         defaultStaticClickPacket(packetInteractionType, client, px, py);
                         break;
@@ -295,28 +281,28 @@ public class ClickManager
                     int ry = (int) (Math.random() * r.getHeight()) + r.y;
 
                     int startX, startY;
-                    if (lastClickPosition == null)
-                    {
+                    if (lastClickPosition == null) {
                         Point entryPoint = generateEntryPoint(r);
                         startX = entryPoint.x;
                         startY = entryPoint.y;
-                    }
-                    else
-                    {
+                    } else {
                         startX = lastClickPosition.x;
                         startY = lastClickPosition.y;
                     }
 
-                    if(Static.getVitaConfig().shouldSpoofMouseMovemnt())
-                    {
+                    if (Static.getVitaConfig().shouldSpoofMouseMovemnt()) {
                         generateMovement(startX, startY, rx, ry);
+                        // Human-like dwell (settle) time after movement (30-110ms)
+                        try {
+                            Thread.sleep(30 + random.nextInt(80));
+                        } catch (InterruptedException ignored) {
+                        }
                     }
 
                     // Flush movement buffer before click (matches natural client behavior)
                     movementBuffer.forceFlush();
                     client.getPacketWriter().clickPacket(0, rx, ry);
-                    synchronized(LOCK)
-                    {
+                    synchronized (LOCK) {
                         clickPackets.add(new ClickPacket(packetInteractionType, rx, ry));
                     }
 
@@ -326,8 +312,7 @@ public class ClickManager
                     break;
 
                 case CONTROLLED:
-                    if(shape == null)
-                    {
+                    if (shape == null) {
                         Logger.warn("Click box is null, defaulting to STATIC.");
                         defaultStaticClickPacket(packetInteractionType, client, px, py);
                         break;
@@ -336,39 +321,36 @@ public class ClickManager
                     Point p = getRandomPointInShape(shape);
 
                     int cStartX, cStartY;
-                    if (lastClickPosition == null)
-                    {
+                    if (lastClickPosition == null) {
                         Rectangle viewport = Static.getRuneLite().getGameApplet().getViewportArea();
-                        if (viewport != null)
-                        {
+                        if (viewport != null) {
                             Point entryPoint = generateEntryPoint(viewport);
                             cStartX = entryPoint.x;
                             cStartY = entryPoint.y;
-                        }
-                        else
-                        {
+                        } else {
                             Rectangle shapeBounds = shape.getBounds();
                             Point entryPoint = generateEntryPoint(shapeBounds);
                             cStartX = entryPoint.x;
                             cStartY = entryPoint.y;
                         }
-                    }
-                    else
-                    {
+                    } else {
                         cStartX = lastClickPosition.x;
                         cStartY = lastClickPosition.y;
                     }
 
-                    if(Static.getVitaConfig().shouldSpoofMouseMovemnt())
-                    {
+                    if (Static.getVitaConfig().shouldSpoofMouseMovemnt()) {
                         generateMovement(cStartX, cStartY, p.x, p.y);
+                        // Human-like dwell (settle) time after movement (30-110ms)
+                        try {
+                            Thread.sleep(30 + random.nextInt(80));
+                        } catch (InterruptedException ignored) {
+                        }
                     }
 
                     // Flush movement buffer before click (matches natural client behavior)
                     movementBuffer.forceFlush();
                     client.getPacketWriter().clickPacket(0, p.x, p.y);
-                    synchronized(LOCK)
-                    {
+                    synchronized (LOCK) {
                         clickPackets.add(new ClickPacket(packetInteractionType, p.x, p.y));
                     }
 
@@ -381,16 +363,28 @@ public class ClickManager
     }
 
     private static Point getRandomPointInShape(Shape shape) {
-        Rectangle bounds = shape.getBounds();
-
-        while (true) {
-            int x = (int) (Math.random() * bounds.width) + bounds.x;
-            int y = (int) (Math.random() * bounds.height) + bounds.y;
-
-            if (shape.contains(x, y)) {
-                return new Point(x, y);
+        Rectangle r = shape.getBounds();
+        // Use a Gaussian bias toward the center (32% spread) for human-like
+        // distribution
+        for (int i = 0; i < 20; i++) {
+            double sx = Math.max(1.0, (r.getWidth() * 0.32) / 2.0);
+            double sy = Math.max(1.0, (r.getHeight() * 0.32) / 2.0);
+            double gx = r.getCenterX() + sx * gauss();
+            double gy = r.getCenterY() + sy * gauss();
+            int px = (int) Math.round(gx);
+            int py = (int) Math.round(gy);
+            if (shape.contains(px, py)) {
+                return new Point(px, py);
             }
         }
+        // Fallback to center if sampling fails
+        return new Point((int) r.getCenterX(), (int) r.getCenterY());
+    }
+
+    private static double gauss() {
+        double u = Math.max(1e-9, random.nextDouble());
+        double v = Math.max(1e-9, random.nextDouble());
+        return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2 * Math.PI * v);
     }
 
     private static void defaultStaticClickPacket(ClickType packetInteractionType, TClient client, int x, int y) {
@@ -400,11 +394,12 @@ public class ClickManager
 
     /**
      * INTERNAL USE: Called injected into OSRS MouseRecorder class. Don't remove.
-     * Blocks manual movement recording when we have pending synthetic movements in buffer.
+     * Blocks manual movement recording when we have pending synthetic movements in
+     * buffer.
+     * 
      * @return bool
      */
-    public static boolean shouldBlockManualMovement()
-    {
+    public static boolean shouldBlockManualMovement() {
         return movementBuffer.getBufferSize() > 0;
     }
 }

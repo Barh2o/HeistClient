@@ -1,7 +1,6 @@
 package ht.heist.services.breakhandler.settings;
 
-public enum Property
-{
+public enum Property {
     MIN_BETWEEN(Settings.MIN_BETWEEN),
     MAX_BETWEEN(Settings.MAX_BETWEEN),
     MIN_DURATION(Settings.MIN_DURATION),
@@ -24,7 +23,12 @@ public enum Property
     DISABLE_REGION_US(Settings.DISABLE_REGION_US),
     DISABLE_REGION_UK(Settings.DISABLE_REGION_UK),
     DISABLE_REGION_DE(Settings.DISABLE_REGION_DE),
-    DISABLE_REGION_AU(Settings.DISABLE_REGION_AU);
+    DISABLE_REGION_AU(Settings.DISABLE_REGION_AU),
+
+    FATIGUE_ENABLED(Settings.FATIGUE_ENABLED),
+    FATIGUE_HOURS_TO_MAX(Settings.FATIGUE_HOURS_TO_MAX),
+    FATIGUE_MAX_BREAK_PCT(Settings.FATIGUE_MAX_BREAK_PCT),
+    FATIGUE_MIN_PLAY_PCT(Settings.FATIGUE_MIN_PLAY_PCT);
 
     private final String key;
 

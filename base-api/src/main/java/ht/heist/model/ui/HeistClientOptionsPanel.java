@@ -34,7 +34,7 @@ public class HeistClientOptionsPanel extends VPluginPanel {
     private static final Color BACKGROUND_GRADIENT_START = new Color(45, 45, 50);
     private static final Color BACKGROUND_GRADIENT_END = new Color(35, 35, 40);
     private static final Color ACCENT_GLOW = new Color(64, 169, 211, 30);
-    private static final Color HEADER_COLOR  = new Color(245, 245, 250);
+    private static final Color HEADER_COLOR = new Color(245, 245, 250);
     private static final Color SEPARATOR_COLOR = new Color(70, 70, 75);
     private static final Color CARD_BACKGROUND = new Color(55, 55, 60);
     private static final Color ACCENT_COLOR = new Color(64, 169, 211);
@@ -68,15 +68,13 @@ public class HeistClientOptionsPanel extends VPluginPanel {
 
                 GradientPaint gradient = new GradientPaint(
                         0, 0, BACKGROUND_GRADIENT_START,
-                        0, getHeight(), BACKGROUND_GRADIENT_END
-                );
+                        0, getHeight(), BACKGROUND_GRADIENT_END);
                 g2d.setPaint(gradient);
                 g2d.fillRect(0, 0, getWidth(), getHeight());
             }
         };
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setOpaque(false);
-
 
         contentPanel.add(Box.createVerticalStrut(10));
 
@@ -90,7 +88,7 @@ public class HeistClientOptionsPanel extends VPluginPanel {
         titlePanel.add(Box.createVerticalStrut(10));
         titlePanel.add(titleLabel);
 
-        JLabel taglineLabel = new JLabel("Enhanced RuneLite Experience");
+        JLabel taglineLabel = new JLabel("GP so free you'd think were stealing it");
         taglineLabel.setFont(new Font("Segoe UI", Font.ITALIC, 11));
         taglineLabel.setForeground(ACCENT_COLOR);
         taglineLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -108,8 +106,7 @@ public class HeistClientOptionsPanel extends VPluginPanel {
                 "Headless Mode",
                 "Run without rendering",
                 headlessToggle,
-                () -> Static.setHeadless(headlessToggle.isSelected())
-        ));
+                () -> Static.setHeadless(headlessToggle.isSelected())));
         generalPanel.addVerticalStrut(12);
 
         ToggleSlider headlessMapToggle = new ToggleSlider();
@@ -124,8 +121,7 @@ public class HeistClientOptionsPanel extends VPluginPanel {
                         // Re-apply current headless state so map mode transitions are immediate.
                         Static.setHeadless(true);
                     }
-                }
-        ));
+                }));
         generalPanel.addVerticalStrut(12);
 
         ToggleSlider neverLogToggle = new ToggleSlider();
@@ -134,8 +130,7 @@ public class HeistClientOptionsPanel extends VPluginPanel {
                 "Never Log",
                 "Prevent the AFK logout",
                 neverLogToggle,
-                () -> Static.getVitaConfig().setNeverLog(neverLogToggle.isSelected())
-        ));
+                () -> Static.getVitaConfig().setNeverLog(neverLogToggle.isSelected())));
         contentPanel.add(generalPanel);
         contentPanel.add(Box.createVerticalStrut(10));
 
@@ -147,8 +142,8 @@ public class HeistClientOptionsPanel extends VPluginPanel {
                 "Log Packets",
                 "Enable packet logging",
                 logPacketsToggle,
-                () -> {}
-        ));
+                () -> {
+                }));
         loggingPanel.addVerticalStrut(12);
 
         logMousePacketsToggle = new ToggleSlider();
@@ -156,8 +151,8 @@ public class HeistClientOptionsPanel extends VPluginPanel {
                 "Log Mouse Packets",
                 "Enable mouse packet logging",
                 logMousePacketsToggle,
-                () -> {}
-        ));
+                () -> {
+                }));
         loggingPanel.addVerticalStrut(12);
 
         logServerPacketsToggle = new ToggleSlider();
@@ -165,8 +160,8 @@ public class HeistClientOptionsPanel extends VPluginPanel {
                 "Log Server Packets",
                 "Enable server packet logging",
                 logServerPacketsToggle,
-                () -> {}
-        ));
+                () -> {
+                }));
         loggingPanel.addVerticalStrut(12);
 
         logMenuActionsToggle = new ToggleSlider();
@@ -174,8 +169,8 @@ public class HeistClientOptionsPanel extends VPluginPanel {
                 "Log Menu Actions",
                 "Enable menu action logging",
                 logMenuActionsToggle,
-                () -> {}
-        ));
+                () -> {
+                }));
         loggingPanel.addVerticalStrut(12);
 
         nameLogging = new ToggleSlider();
@@ -184,8 +179,7 @@ public class HeistClientOptionsPanel extends VPluginPanel {
                 "Logger Names",
                 "Show gameval names in logging",
                 nameLogging,
-                () -> Static.getVitaConfig().setShouldLogNames(nameLogging.isSelected())
-        ));
+                () -> Static.getVitaConfig().setShouldLogNames(nameLogging.isSelected())));
         loggingPanel.addVerticalStrut(12);
 
         hideLoggerToggle = new ToggleSlider();
@@ -197,15 +191,13 @@ public class HeistClientOptionsPanel extends VPluginPanel {
                 () -> {
                     Logger.setLoggerVisible(!hideLoggerToggle.isSelected());
                     Static.getVitaConfig().setShowLoggerPanel(!hideLoggerToggle.isSelected());
-                }
-        ));
+                }));
         loggingPanel.addVerticalStrut(12);
 
         // Log history limit spinner
         FancySpinner logHistorySpinner = new FancySpinner(
                 "Log History Limit",
-                1, 1000, Static.getVitaConfig().getLogHistoryLimit()
-        );
+                1, 1000, Static.getVitaConfig().getLogHistoryLimit());
         // Set initial Logger max messages from config
         Logger.setMaxMessages(Static.getVitaConfig().getLogHistoryLimit());
         Static.getVitaConfig().setLogHistoryLimit(Static.getVitaConfig().getLogHistoryLimit());
@@ -228,8 +220,7 @@ public class HeistClientOptionsPanel extends VPluginPanel {
                 "Cached RandomDat",
                 "Spoof and cache per-account Random dat data",
                 cachedRandomDat,
-                () -> Static.getVitaConfig().setShouldCacheRandomDat(cachedRandomDat.isSelected())
-        ));
+                () -> Static.getVitaConfig().setShouldCacheRandomDat(cachedRandomDat.isSelected())));
         cachingPanel.addVerticalStrut(12);
 
         ToggleSlider cachedDeviceID = new ToggleSlider();
@@ -238,8 +229,7 @@ public class HeistClientOptionsPanel extends VPluginPanel {
                 "Cached DeviceID",
                 "Spoof and cache per-account DeviceID",
                 cachedDeviceID,
-                () -> Static.getVitaConfig().setShouldCacheDeviceId(cachedDeviceID.isSelected())
-        ));
+                () -> Static.getVitaConfig().setShouldCacheDeviceId(cachedDeviceID.isSelected())));
         cachingPanel.addVerticalStrut(12);
 
         bankCacheToggle = new ToggleSlider();
@@ -248,8 +238,7 @@ public class HeistClientOptionsPanel extends VPluginPanel {
                 "Persist Bank Cache",
                 "Save the bank caching for reuse between sessions",
                 bankCacheToggle,
-                () -> Static.getVitaConfig().setShouldCacheBank(bankCacheToggle.isSelected())
-        ));
+                () -> Static.getVitaConfig().setShouldCacheBank(bankCacheToggle.isSelected())));
 
         contentPanel.add(cachingPanel);
         contentPanel.add(Box.createVerticalStrut(10));
@@ -274,11 +263,9 @@ public class HeistClientOptionsPanel extends VPluginPanel {
                 "Draw Walker Path",
                 "Draw the walker path on the floating and mini maps",
                 drawPath,
-                () -> Static.getVitaConfig().setShouldDrawWalkerPath(drawPath.isSelected())
-        ));
+                () -> Static.getVitaConfig().setShouldDrawWalkerPath(drawPath.isSelected())));
 
-        if(!Static.isRunningFromShadedJar())
-        {
+        if (!Static.isRunningFromShadedJar()) {
             walkerPanel.addVerticalStrut(12);
             FancyButton transportButton = new FancyButton("Transport Editor");
             transportButton.addActionListener(e -> toggleTransportsEditor());
@@ -288,7 +275,7 @@ public class HeistClientOptionsPanel extends VPluginPanel {
         contentPanel.add(walkerPanel);
         contentPanel.add(Box.createVerticalStrut(10));
 
-        //Boat Settings
+        // Boat Settings
         CollapsiblePanel boatPanel = new CollapsiblePanel("Boat Debug");
 
         ToggleSlider drawHull = new ToggleSlider();
@@ -297,8 +284,7 @@ public class HeistClientOptionsPanel extends VPluginPanel {
                 "Draw Boat Hull",
                 "Draw the Boat hull collision when on a boat",
                 drawHull,
-                () -> Static.getVitaConfig().setDrawBoatHull(drawHull.isSelected())
-        ));
+                () -> Static.getVitaConfig().setDrawBoatHull(drawHull.isSelected())));
 
         boatPanel.addVerticalStrut(12);
 
@@ -308,8 +294,7 @@ public class HeistClientOptionsPanel extends VPluginPanel {
                 "Draw Boat Deck",
                 "Draw the Boat Deck collision when on a boat",
                 drawDeck,
-                () -> Static.getVitaConfig().setDrawBoatDeck(drawDeck.isSelected())
-        ));
+                () -> Static.getVitaConfig().setDrawBoatDeck(drawDeck.isSelected())));
 
         boatPanel.addVerticalStrut(12);
 
@@ -319,8 +304,7 @@ public class HeistClientOptionsPanel extends VPluginPanel {
                 "Boat Debug Overlay",
                 "Draw boat stats overlay when on a boat",
                 drawDebug,
-                () -> Static.getVitaConfig().setDrawBoatDebug(drawDebug.isSelected())
-        ));
+                () -> Static.getVitaConfig().setDrawBoatDebug(drawDebug.isSelected())));
 
         contentPanel.add(boatPanel);
         contentPanel.add(Box.createVerticalStrut(10));
@@ -334,8 +318,7 @@ public class HeistClientOptionsPanel extends VPluginPanel {
                 "Draw Tile Collision",
                 "Draw tile collision on the floating and mini maps",
                 drawCollision,
-                () -> Static.getVitaConfig().setShouldDrawCollision(drawCollision.isSelected())
-        ));
+                () -> Static.getVitaConfig().setShouldDrawCollision(drawCollision.isSelected())));
         scenePanel.addVerticalStrut(12);
 
         ToggleSlider drawInteractable = new ToggleSlider();
@@ -344,8 +327,7 @@ public class HeistClientOptionsPanel extends VPluginPanel {
                 "Draw Interactable Faces",
                 "Draw lines showing where objects are interactable from.",
                 drawInteractable,
-                () -> Static.getVitaConfig().setShouldDrawInteractable(drawInteractable.isSelected())
-        ));
+                () -> Static.getVitaConfig().setShouldDrawInteractable(drawInteractable.isSelected())));
 
         scenePanel.addVerticalStrut(12);
 
@@ -355,20 +337,16 @@ public class HeistClientOptionsPanel extends VPluginPanel {
                 "Debug Strat Pathing",
                 "Define warning and impassible tiles for strategic pathfinding with overlay.",
                 debugStratPathing,
-                () -> Static.getVitaConfig().setDrawStratPath(debugStratPathing.isSelected())
-        ));
+                () -> Static.getVitaConfig().setDrawStratPath(debugStratPathing.isSelected())));
 
         scenePanel.addVerticalStrut(12);
 
         FancyButton distanceDebug = new FancyButton("Distance Debugger");
         distanceDebug.addActionListener(e -> {
             DistanceDebugger window = DistanceDebugger.getInstance();
-            if (window.isVisible())
-            {
+            if (window.isVisible()) {
                 window.setVisible(false);
-            }
-            else
-            {
+            } else {
                 window.setVisible(true);
                 window.toFront();
             }
@@ -388,15 +366,13 @@ public class HeistClientOptionsPanel extends VPluginPanel {
                 "Spoof mouse movement data.",
                 sendMouseMovement,
                 () -> {
-                    if(!Static.getVitaConfig().getHasAcceptedWarning())
-                    {
+                    if (!Static.getVitaConfig().getHasAcceptedWarning()) {
                         int result = JOptionPane.showConfirmDialog(
                                 this,
                                 "Spoofing mouse movements is experimental and not guaranteed currently to be safe. Use at your own risk. Do you wish to proceed?",
                                 "Warning",
                                 JOptionPane.YES_NO_OPTION,
-                                JOptionPane.WARNING_MESSAGE
-                        );
+                                JOptionPane.WARNING_MESSAGE);
                         if (result != JOptionPane.YES_OPTION) {
                             sendMouseMovement.setSelected(false);
                             return;
@@ -406,16 +382,12 @@ public class HeistClientOptionsPanel extends VPluginPanel {
                     Static.getVitaConfig().setSpoofMouseMovement(sendMouseMovement.isSelected());
 
                     // Start/stop continuous movement sampling to match client behavior
-                    if (sendMouseMovement.isSelected())
-                    {
+                    if (sendMouseMovement.isSelected()) {
                         ClickManager.startMovementSampling();
-                    }
-                    else
-                    {
+                    } else {
                         ClickManager.stopMovementSampling();
                     }
-                }
-        ));
+                }));
         inputPanel.addVerticalStrut(12);
 
         recordTrajectory = new ToggleSlider();
@@ -429,19 +401,15 @@ public class HeistClientOptionsPanel extends VPluginPanel {
                     } else {
                         TrajectoryService.stopRecording();
                     }
-                }
-        ));
+                }));
         inputPanel.addVerticalStrut(12);
 
         FancyButton monitor = new FancyButton("Training Monitor");
         monitor.addActionListener(e -> {
             TrajectoryTrainerMonitor window = TrajectoryTrainerMonitor.getInstance();
-            if (window.isVisible())
-            {
+            if (window.isVisible()) {
                 window.setVisible(false);
-            }
-            else
-            {
+            } else {
                 window.setVisible(true);
                 window.toFront();
             }
@@ -452,12 +420,9 @@ public class HeistClientOptionsPanel extends VPluginPanel {
         FancyButton settings = new FancyButton("Movement Settings");
         settings.addActionListener(e -> {
             TrajectorySettingsPanel window = TrajectorySettingsPanel.getInstance();
-            if (window.isVisible())
-            {
+            if (window.isVisible()) {
                 window.setVisible(false);
-            }
-            else
-            {
+            } else {
                 window.setVisible(true);
                 window.toFront();
             }
@@ -476,8 +441,7 @@ public class HeistClientOptionsPanel extends VPluginPanel {
                 () -> {
                     Static.getVitaConfig().setVisualizeMovements(visualizeMovements.isSelected());
                     MovementVisualization.setEnabled(visualizeMovements.isSelected());
-                }
-        ));
+                }));
         inputPanel.addVerticalStrut(12);
 
         ToggleSlider visualizeClicks = new ToggleSlider();
@@ -487,8 +451,7 @@ public class HeistClientOptionsPanel extends VPluginPanel {
                 "Visualize Clicks",
                 "Show generated mouse clicks on the game canvas.",
                 visualizeClicks,
-                () -> Static.getVitaConfig().setVisualizeClicks(visualizeClicks.isSelected())
-        ));
+                () -> Static.getVitaConfig().setVisualizeClicks(visualizeClicks.isSelected())));
         inputPanel.addVerticalStrut(12);
 
         FancyDropdown<ClickStrategy> clickStrategyDropdown = new FancyDropdown<>("Click Strategy", ClickStrategy.class);
@@ -498,8 +461,7 @@ public class HeistClientOptionsPanel extends VPluginPanel {
         FancyDualSpinner pointSpinner = new FancyDualSpinner(
                 "Static Click Point",
                 Integer.MIN_VALUE, Integer.MAX_VALUE, Static.getVitaConfig().getClickPointX(),
-                Integer.MIN_VALUE, Integer.MAX_VALUE, Static.getVitaConfig().getClickPointY()
-        );
+                Integer.MIN_VALUE, Integer.MAX_VALUE, Static.getVitaConfig().getClickPointY());
         ClickManager.setPoint(pointSpinner.getLeftValue().intValue(), pointSpinner.getRightValue().intValue());
         pointSpinner.setVisible(strat == ClickStrategy.STATIC);
         pointSpinner.addChangeListener(e -> {
@@ -555,8 +517,7 @@ public class HeistClientOptionsPanel extends VPluginPanel {
         updateTrajectoryQualityState();
 
         // Auto-start movement sampling if spoofing is already enabled
-        if (Static.getVitaConfig().shouldSpoofMouseMovemnt())
-        {
+        if (Static.getVitaConfig().shouldSpoofMouseMovemnt()) {
             ClickManager.startMovementSampling();
         }
     }
@@ -608,7 +569,7 @@ public class HeistClientOptionsPanel extends VPluginPanel {
 
                 g2d.setColor(thumbColor);
                 g2d.fillRoundRect(thumbBounds.x + 2, thumbBounds.y + 2,
-                                thumbBounds.width - 4, thumbBounds.height - 4, 6, 6);
+                        thumbBounds.width - 4, thumbBounds.height - 4, 6, 6);
             }
 
             @Override
@@ -624,31 +585,25 @@ public class HeistClientOptionsPanel extends VPluginPanel {
         scrollPane.getVerticalScrollBar().setBlockIncrement(64);
     }
 
-    private JFrame getTransportsEditor()
-    {
-        try
-        {
-            Class<?> clazz = Static.getClient().getClass().getClassLoader().loadClass("ht.heist.services.pathfinder.ui.TransportEditorFrame");
+    private JFrame getTransportsEditor() {
+        try {
+            Class<?> clazz = Static.getClient().getClass().getClassLoader()
+                    .loadClass("ht.heist.services.pathfinder.ui.TransportEditorFrame");
             return (JFrame) clazz.getDeclaredConstructor().newInstance();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Logger.error("Failed to open Transports Editor: " + e.getMessage());
         }
         return null;
     }
 
-    public void toggleTransportsEditor()
-    {
-        if(transportsEditor == null)
-        {
+    public void toggleTransportsEditor() {
+        if (transportsEditor == null) {
             transportsEditor = ThreadPool.submit(this::getTransportsEditor);
         }
         SwingUtilities.invokeLater(() -> transportsEditor.setVisible(!transportsEditor.isVisible()));
     }
 
-    private void checkMouseValues()
-    {
+    private void checkMouseValues() {
         Object client = Static.getClient();
         long client_latsPressed = ReflectBuilder.of(client)
                 .method("getClientMouseLastPressedMillis", null, null)
@@ -663,9 +618,10 @@ public class HeistClientOptionsPanel extends VPluginPanel {
 
         int time = (int) (ms - mh_lastPressed);
 
-        short info = (short)(time << 1);
+        short info = (short) (time << 1);
 
-        Logger.info("Client last pressed: " + client_latsPressed + ", MouseHandler last pressed: " + mh_lastPressed + ", Diff: " + time + ", Info: " + info);
+        Logger.info("Client last pressed: " + client_latsPressed + ", MouseHandler last pressed: " + mh_lastPressed
+                + ", Diff: " + time + ", Info: " + info);
     }
 
     private JPanel createToggleOption(String title, String description, ToggleSlider toggle, Runnable onClick) {
@@ -685,9 +641,9 @@ public class HeistClientOptionsPanel extends VPluginPanel {
                 g2d.setColor(ACCENT_GLOW);
                 int glowRadius = 20;
                 for (int i = glowRadius; i > 0; i--) {
-                    float alpha = (float)(glowRadius - i) / glowRadius * 0.3f;
-                    g2d.setColor(new Color(64, 169, 211, (int)(alpha * 255)));
-                    g2d.fillRoundRect(i/2, i/2, getWidth() - i, getHeight() - i, 15, 15);
+                    float alpha = (float) (glowRadius - i) / glowRadius * 0.3f;
+                    g2d.setColor(new Color(64, 169, 211, (int) (alpha * 255)));
+                    g2d.fillRoundRect(i / 2, i / 2, getWidth() - i, getHeight() - i, 15, 15);
                 }
 
                 g2d.setColor(CARD_BACKGROUND);
@@ -699,70 +655,59 @@ public class HeistClientOptionsPanel extends VPluginPanel {
         return panel;
     }
 
-    public void onMenuAction(String option, String target, int identifier, int opcode, int param0, int param1, int itemId)
-    {
-        if(!logMenuActionsToggle.isSelected())
+    public void onMenuAction(String option, String target, int identifier, int opcode, int param0, int param1,
+            int itemId) {
+        if (!logMenuActionsToggle.isSelected())
             return;
 
-        String actionInfo = String.format("MenuAction: option='%s', target='%s', id=%d, opcode=%d, param0=%d, param1=%d, itemId=%d",
+        String actionInfo = String.format(
+                "MenuAction: option='%s', target='%s', id=%d, opcode=%d, param0=%d, param1=%d, itemId=%d",
                 option, target, identifier, opcode, param0, param1, itemId);
 
         Logger.info(actionInfo);
     }
 
-    public void onPacketSent(PacketSent event)
-    {
+    public void onPacketSent(PacketSent event) {
         int isMouse = event.isMouse();
-        if(isMouse != 0)
-        {
-            if(logMousePacketsToggle.isSelected() && isMouse == 1)
-            {
+        if (isMouse != 0) {
+            if (logMousePacketsToggle.isSelected() && isMouse == 1) {
                 Logger.info(event.toString());
             }
 
-            if((logMousePacketsToggle.isSelected() || recordTrajectory.isSelected()) && isMouse == 2)
-            {
+            if ((logMousePacketsToggle.isSelected() || recordTrajectory.isSelected()) && isMouse == 2) {
                 DecodedMousePacket decodedInfo;
-                try
-                {
+                try {
                     decodedInfo = MousePacketDecoder.decode(event.getFreshBuffer());
-                }
-                catch(Exception e)
-                {
+                } catch (Exception e) {
                     Logger.error("Failed to decode mouse packet: " + e.getMessage());
                     Logger.error(String.valueOf(event.getId()));
                     return;
                 }
-                if(recordTrajectory.isSelected())
-                {
+                if (recordTrajectory.isSelected()) {
                     TrajectoryService.getPacketCapture().submitDecodedPacket(decodedInfo);
                 }
-                if(logMousePacketsToggle.isSelected())
-                {
+                if (logMousePacketsToggle.isSelected()) {
                     Logger.info("[OP_MOUSE_MOVEMENT(" + event.getId() + ")] " + decodedInfo);
                 }
             }
             return;
         }
 
-        if(!logPacketsToggle.isSelected())
-        {
+        if (!logPacketsToggle.isSelected()) {
             return;
         }
 
         String packetInfo = event.toString();
 
-        if(packetInfo.startsWith("[UNKNOWN("))
-        {
+        if (packetInfo.startsWith("[UNKNOWN(")) {
             return;
         }
 
         Logger.info(packetInfo);
     }
 
-    public void onPacketReceived(PacketReceived event)
-    {
-        if(!logServerPacketsToggle.isSelected())
+    public void onPacketReceived(PacketReceived event) {
+        if (!logServerPacketsToggle.isSelected())
             return;
 
         String packetInfo = event.toHex();
@@ -771,10 +716,8 @@ public class HeistClientOptionsPanel extends VPluginPanel {
         Logger.info("[ServerPacket(" + id + ":" + len + ")] " + packetInfo);
     }
 
-    private void startTrajectoryCheckTimer()
-    {
-        if (trajectoryCheckTimer != null)
-        {
+    private void startTrajectoryCheckTimer() {
+        if (trajectoryCheckTimer != null) {
             trajectoryCheckTimer.stop();
         }
 
@@ -783,32 +726,24 @@ public class HeistClientOptionsPanel extends VPluginPanel {
         trajectoryCheckTimer.start();
     }
 
-    private void updateTrajectoryQualityState()
-    {
+    private void updateTrajectoryQualityState() {
         SwingUtilities.invokeLater(() -> {
-            try
-            {
+            try {
                 int trajectoryCount = TrajectoryService.getDatabase().getTrajectoryCount();
                 boolean shouldEnable = trajectoryCount >= 50;
 
-                if (sendMouseMovement != null)
-                {
+                if (sendMouseMovement != null) {
                     sendMouseMovement.setEnabled(shouldEnable);
-                    if (!shouldEnable)
-                    {
+                    if (!shouldEnable) {
                         sendMouseMovement.setToolTipText(String.format(
-                            "Training data insufficient: %d trajectories (requires 50)", trajectoryCount));
+                                "Training data insufficient: %d trajectories (requires 50)", trajectoryCount));
                         sendMouseMovement.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                    }
-                    else
-                    {
+                    } else {
                         sendMouseMovement.setToolTipText("Spoof mouse movement data.");
                         sendMouseMovement.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                     }
                 }
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 Logger.warn("Failed to update trajectory quality state: " + ex.getMessage());
             }
         });

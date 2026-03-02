@@ -20,9 +20,30 @@ public class Install {
     public void injectBuiltInPlugins(List<Class<?>> original) {
         try {
             File builtIns = loadBuildIns().toFile();
-            PluginClassLoader classLoader = new PluginClassLoader(builtIns, Main.CLASSLOADER);
+            PluginClassLoader classLoader = new PluginClassLoader(builtIns, ht.heist.heistclient.Main.CLASSLOADER);
             original.addAll(classLoader.getPluginClasses());
+
+            // Explicitly add our new plugins using the plugin classloader
+            tryToAddPlugin(original, "ht.heist.plugins.HeistHUDPlugin", classLoader);
+            tryToAddPlugin(original, "ht.heist.plugins.questing.CooksAssistantPlugin", classLoader);
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void tryToAddPlugin(List<Class<?>> original, String className, ClassLoader classLoader) {
+        try {
+            Class<?> clazz = Class.forName(className, true, classLoader);
+            if (!original.contains(clazz)) {
+                original.add(clazz);
+                ht.heist.Logger.info("Successfully injected plugin: " + className);
+                System.out.println("[Heist] Successfully injected plugin: " + className);
+            }
+        } catch (ClassNotFoundException e) {
+            ht.heist.Logger.warn("Could not find plugin for injection: " + className);
+            System.err.println("[Heist] Could not find plugin: " + className);
+        } catch (Exception e) {
+            ht.heist.Logger.error("Error during plugin injection: " + className, e);
             e.printStackTrace();
         }
     }

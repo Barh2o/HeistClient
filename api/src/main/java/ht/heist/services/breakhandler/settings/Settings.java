@@ -1,7 +1,6 @@
 package ht.heist.services.breakhandler.settings;
 
-public class Settings
-{
+public class Settings {
     static final String GROUP = "BreakHandler.";
 
     static final String MIN_BETWEEN = "minBetween";
@@ -26,5 +25,10 @@ public class Settings
     static final String DISABLE_REGION_UK = "world.disable.region.uk";
     static final String DISABLE_REGION_DE = "world.disable.region.de";
     static final String DISABLE_REGION_AU = "world.disable.region.au";
+
+    static final String FATIGUE_ENABLED = "fatigue.enabled";
+    static final String FATIGUE_HOURS_TO_MAX = "fatigue.hoursToMax";
+    static final String FATIGUE_MAX_BREAK_PCT = "fatigue.maxBreakPct";
+    static final String FATIGUE_MIN_PLAY_PCT = "fatigue.minPlayPct";
 
 }

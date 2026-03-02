@@ -14,14 +14,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class ClientUIUpdater
-{
+public class ClientUIUpdater {
     private static JPanel wrapper;
     private static JScrollPane scrollPane;
 
-    public static void inject()
-    {
-        if(Static.getCliArgs().isIncognito())
+    public static void inject() {
+        if (Static.getCliArgs().isIncognito())
             return;
 
         addNavigation();
@@ -41,15 +39,11 @@ public class ClientUIUpdater
 
         BufferedImage icon = ResourceUtil.getImage(Main.class, "icon.png");
         frame.setIconImage(icon);
-        if(ProxyManager.getProxy() != null)
-        {
+        if (ProxyManager.getProxy() != null) {
             frame.setTitle("HeistClient (Proxy: " +
                     ProxyManager.getProxy().getHost() + ":" +
-                    ProxyManager.getProxy().getPort() + ")"
-            );
-        }
-        else
-        {
+                    ProxyManager.getProxy().getPort() + ")");
+        } else {
             frame.setTitle("HeistClient");
         }
 
@@ -69,12 +63,11 @@ public class ClientUIUpdater
         frame.repaint();
     }
 
-    private static void addNavigation()
-    {
+    private static void addNavigation() {
         BufferedImage info = ResourceUtil.getImage(Main.class, "info.png");
         NavButton.builder()
                 .icon(info)
-                .priority(1000)
+                .priority(0)
                 .tooltip("HeistClient Info")
                 .panel(new HeistClientInfoPanel())
                 .addToNavigation();
@@ -82,7 +75,7 @@ public class ClientUIUpdater
         BufferedImage settings = ResourceUtil.getImage(Main.class, "settings.png");
         NavButton.builder()
                 .icon(settings)
-                .priority(999)
+                .priority(0)
                 .tooltip("HeistClient Options")
                 .panel(HeistClientOptionsPanel.getInstance())
                 .addToNavigation();
@@ -90,10 +83,10 @@ public class ClientUIUpdater
 
     /**
      * Patches the splash screen of the client. don't remove, call is injected.
+     * 
      * @param jFrame SplashScreen jframe
      */
-    public static void patchSplashScreen(JFrame jFrame)
-    {
+    public static void patchSplashScreen(JFrame jFrame) {
         jFrame.setTitle("HeistClient Launcher");
         jFrame.setIconImage(ResourceUtil.getImage(Main.class, "icon.png"));
         jFrame.setBackground(Color.BLACK);

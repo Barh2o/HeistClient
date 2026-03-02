@@ -40,12 +40,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
-@PluginDescriptor(
-        name = "# Break Handler",
-        description = "Schedules and takes breaks automatically"
-)
-public class BreakHandlerPlugin extends Plugin
-{
+@PluginDescriptor(name = "Heist Break Handler", description = "Schedules and takes breaks automatically")
+public class BreakHandlerPlugin extends Plugin {
     private static final BufferedImage pluginIcon = ImageUtil.loadImageResource(BreakHandlerPlugin.class, "clock.png");
 
     private static final int LOGIN_ATTEMPT_LIMIT = 5;
@@ -87,8 +83,7 @@ public class BreakHandlerPlugin extends Plugin
     private boolean autoLogin;
 
     @Override
-    protected void startUp() throws Exception
-    {
+    protected void startUp() throws Exception {
         panel = new BreakHandlerPanel();
         navigationButton = NavigationButton.builder()
                 .panel(panel)
@@ -106,23 +101,20 @@ public class BreakHandlerPlugin extends Plugin
         logoutAttemptDelay = 0;
         targetWorld = -1;
         exec = Executors.newSingleThreadScheduledExecutor(r -> {
-            Thread t = new Thread(r, "Vita-BreakHandler");
+            Thread t = new Thread(r, "Heist-BreakHandler");
             t.setDaemon(true);
             return t;
         });
-        updater = exec.scheduleAtFixedRate(() ->
-                clientThread.invoke(this::update), 1, 1, TimeUnit.SECONDS);
+        updater = exec.scheduleAtFixedRate(() -> clientThread.invoke(this::update), 1, 1, TimeUnit.SECONDS);
         configManager = breakHandler.getConfigManager();
         checkVmArgs();
     }
 
     @Override
-    protected void shutDown() throws Exception
-    {
+    protected void shutDown() throws Exception {
         breakHandler.cancel();
         clientToolbar.removeNavigation(navigationButton);
-        if (updater != null)
-        {
+        if (updater != null) {
             updater.cancel(true);
             updater = null;
         }
@@ -131,20 +123,17 @@ public class BreakHandlerPlugin extends Plugin
         exec = null;
     }
 
-    private void checkVmArgs()
-    {
+    private void checkVmArgs() {
         String profile = System.getProperty("vProfile", "");
 
-        if (!profile.isEmpty())
-        {
+        if (!profile.isEmpty()) {
             this.configManager.setProperty(Property.ACCOUNT_PROFILE.key(), profile);
         }
 
         String username = System.getProperty("vUsername", "");
         String password = System.getProperty("vPassword", "");
 
-        if (!username.isEmpty() && !password.isEmpty())
-        {
+        if (!username.isEmpty() && !password.isEmpty()) {
             this.configManager.setProperty(Property.ACCOUNT_USERNAME.key(), username);
             this.configManager.setProperty(Property.ACCOUNT_PASSWORD.key(), password);
         }
@@ -154,67 +143,55 @@ public class BreakHandlerPlugin extends Plugin
     }
 
     @Subscribe
-    private void onGameTick(GameTick event)
-    {
-        if (state == State.LOGOUT)
-        {
+    private void onGameTick(GameTick event) {
+        if (state == State.LOGOUT) {
             logout();
         }
     }
 
     @Subscribe
-    private void onGameStateChanged(GameStateChanged event)
-    {
+    private void onGameStateChanged(GameStateChanged event) {
         int loginIndex = client.getLoginIndex();
 
-        if (state == State.LOGIN)
-        {
-            if (loginIndex == 14)
-            {
+        if (state == State.LOGIN) {
+            if (loginIndex == 14) {
                 breakHandler.log("[%s] Ban/Lock/Unpaid balance detected, " +
-                                "cancelling breaks this session", "Break Handler");
+                        "cancelling breaks this session", "Break Handler");
                 breakHandler.cancel();
             }
         }
 
         GameState gameState = event.getGameState();
 
-        if (gameState == GameState.LOGGED_IN)
-        {
+        if (gameState == GameState.LOGGED_IN) {
             loginAttempts = 0;
             targetWorld = -1;
         }
 
-        if (gameState == GameState.LOGIN_SCREEN && state == State.LOGOUT)
-        {
+        if (gameState == GameState.LOGIN_SCREEN && state == State.LOGOUT) {
             logoutAttempts = 0;
             state = State.IDLE;
         }
     }
 
-    private void logout()
-    {
-        if (logoutAttemptDelay > 0)
-        {
+    private void logout() {
+        if (logoutAttemptDelay > 0) {
             logoutAttemptDelay--;
             return;
         }
 
-        if (logoutAttempts > LOGOUT_ATTEMPT_LIMIT)
-        {
+        if (logoutAttempts > LOGOUT_ATTEMPT_LIMIT) {
             breakHandler.log("[%s] Exceeded max attempts trying to logout, " +
-                            "cancelling breaks this session.", "Break Handler");
+                    "cancelling breaks this session.", "Break Handler");
             return;
         }
 
-        if (client.getVarcIntValue(VarClientID.TOPLEVEL_PANEL) != 10)
-        {
+        if (client.getVarcIntValue(VarClientID.TOPLEVEL_PANEL) != 10) {
             client.runScript(SWITCH_TAB_SCRIPT_ID, 10);
             breakHandler.log("[%s] Switching to logout interface tab", "Break Handler");
         }
 
-        if (isLogoutButtonVisible())
-        {
+        if (isLogoutButtonVisible()) {
             WidgetAPI.interact(1, InterfaceID.Logout.LOGOUT, -1, -1);
             logoutAttempts++;
             loginAttemptDelay = LOGOUT_ATTEMPT_DELAY;
@@ -222,8 +199,7 @@ public class BreakHandlerPlugin extends Plugin
             return;
         }
 
-        if (isLogoutDoorVisible())
-        {
+        if (isLogoutDoorVisible()) {
             WidgetAPI.interact(1, InterfaceID.Worldswitcher.LOGOUT, -1, -1);
             logoutAttempts++;
             loginAttemptDelay = LOGOUT_ATTEMPT_DELAY;
@@ -231,31 +207,26 @@ public class BreakHandlerPlugin extends Plugin
         }
     }
 
-    private boolean isLogoutButtonVisible()
-    {
+    private boolean isLogoutButtonVisible() {
         Widget logoutButton = client.getWidget(InterfaceID.Logout.LOGOUT);
         return WidgetAPI.isVisible(logoutButton);
     }
 
-    private boolean isLogoutDoorVisible()
-    {
+    private boolean isLogoutDoorVisible() {
         Widget logoutDoorButton = client.getWidget(InterfaceID.Worldswitcher.LOGOUT);
         return WidgetAPI.isVisible(logoutDoorButton);
     }
 
-    private void update()
-    {
+    private void update() {
         updateBreaks();
         panel.refreshBreakList();
         updateState();
 
-        if (state != State.LOGIN)
-        {
+        if (state != State.LOGIN) {
             boolean autoLogin = configManager.getBooleanOrDefault(
                     Property.ACCOUNT_AUTO_LOGIN.key(), false);
 
-            if (autoLogin)
-            {
+            if (autoLogin) {
                 handleAutoLogin();
             }
 
@@ -265,35 +236,28 @@ public class BreakHandlerPlugin extends Plugin
         login();
     }
 
-    private void updateBreaks()
-    {
+    private void updateBreaks() {
         GameState gameState = client.getGameState();
 
-        if (gameState == GameState.LOGGED_IN)
-        {
+        if (gameState == GameState.LOGGED_IN) {
             breakHandler.notifyLogin();
         }
 
-        if (gameState == GameState.LOGIN_SCREEN)
-        {
+        if (gameState == GameState.LOGIN_SCREEN) {
             breakHandler.notifyLogout();
         }
     }
 
-    private void updateState()
-    {
+    private void updateState() {
         GameState gameState = client.getGameState();
         List<Break> allBreaks = breakHandler.getAllBreaks();
 
-        if (breakHandler.isReadyToBreak() && gameState == GameState.LOGGED_IN)
-        {
+        if (breakHandler.isReadyToBreak() && gameState == GameState.LOGGED_IN) {
             state = State.WAITING_TO_LOGOUT;
 
-            for (Break b : allBreaks)
-            {
+            for (Break b : allBreaks) {
                 if (b.getCanAccess().getAsBoolean()
-                        && b.getCanStart().getAsBoolean() && b.isBreakReady())
-                {
+                        && b.getCanStart().getAsBoolean() && b.isBreakReady()) {
                     state = State.LOGOUT;
                     break;
                 }
@@ -301,8 +265,7 @@ public class BreakHandlerPlugin extends Plugin
             return;
         }
 
-        if (breakHandler.isReadyToLogin() && gameState == GameState.LOGIN_SCREEN)
-        {
+        if (breakHandler.isReadyToLogin() && gameState == GameState.LOGIN_SCREEN) {
             state = State.LOGIN;
             return;
         }
@@ -310,34 +273,28 @@ public class BreakHandlerPlugin extends Plugin
         state = State.IDLE;
     }
 
-    private void handleAutoLogin()
-    {
+    private void handleAutoLogin() {
         GameState gameState = client.getGameState();
 
         boolean shouldLogin = gameState == GameState.LOGIN_SCREEN
                 && !breakHandler.isBreaking();
 
-        if (shouldLogin)
-        {
-            if (client.getGameState() == GameState.LOGIN_SCREEN)
-            {
+        if (shouldLogin) {
+            if (client.getGameState() == GameState.LOGIN_SCREEN) {
                 login();
             }
         }
     }
 
-    private void login()
-    {
-        if (loginAttemptDelay > 0)
-        {
+    private void login() {
+        if (loginAttemptDelay > 0) {
             loginAttemptDelay--;
             return;
         }
 
         GameState gameState = client.getGameState();
 
-        if (gameState == GameState.LOGGING_IN)
-        {
+        if (gameState == GameState.LOGGING_IN) {
             return;
         }
 
@@ -346,10 +303,8 @@ public class BreakHandlerPlugin extends Plugin
         boolean hop = configManager.getBooleanOrDefault(Property.HOP_ENABLED.key(),
                 false);
 
-        if (hop)
-        {
-            if (targetWorld == -1 || world != targetWorld)
-            {
+        if (hop) {
+            if (targetWorld == -1 || world != targetWorld) {
                 setWorld();
                 loginAttemptDelay = SET_WORLD_BASE_DELAY
                         + ThreadLocalRandom.current().nextInt(0, 15);
@@ -357,8 +312,7 @@ public class BreakHandlerPlugin extends Plugin
             }
         }
 
-        if (loginAttempts >= LOGIN_ATTEMPT_LIMIT)
-        {
+        if (loginAttempts >= LOGIN_ATTEMPT_LIMIT) {
             breakHandler.log("[%s] Exceeded maximum login attempts. " +
                     "Cancelling break handler this session", "Break Handler");
             breakHandler.cancel();
@@ -368,8 +322,7 @@ public class BreakHandlerPlugin extends Plugin
         boolean profiles = configManager.getBooleanOrDefault(Property.ACCOUNT_MODE.key(),
                 false);
 
-        if (profiles)
-        {
+        if (profiles) {
             loginProfiles();
             return;
         }
@@ -407,15 +360,13 @@ public class BreakHandlerPlugin extends Plugin
         breakHandler.log("[%s] Logging in with profile - %s", "Break Handler", profileName);
     }
 
-    private void loginDefault()
-    {
+    private void loginDefault() {
         String username = configManager.getStringOrDefault(
                 Property.ACCOUNT_USERNAME.key(), "");
         String password = configManager.getStringOrDefault(
                 Property.ACCOUNT_PASSWORD.key(), "");
 
-        if (username.isEmpty() || password.isEmpty())
-        {
+        if (username.isEmpty() || password.isEmpty()) {
             breakHandler.log("[%s] Unable to login with empty username or password, " +
                     "cancelling break", "Break Handler");
             breakHandler.cancel();
@@ -432,19 +383,16 @@ public class BreakHandlerPlugin extends Plugin
                 "Break Handler", username, loginAttempts);
     }
 
-    private void setWorld()
-    {
+    private void setWorld() {
         WorldResult worldResult = worldService.getWorlds();
-        if (worldResult == null)
-        {
+        if (worldResult == null) {
             breakHandler.log("[%s] Unable to retrieve worlds, please wait", "Break Handler");
             return;
         }
 
         World currentWorld = worldResult.findWorld(client.getWorld());
 
-        if (currentWorld == null)
-        {
+        if (currentWorld == null) {
             breakHandler.log("[%s] Unable to find current world, please wait", "Break Handler");
             return;
         }
@@ -464,8 +412,7 @@ public class BreakHandlerPlugin extends Plugin
         hop(target);
     }
 
-    private void hop(World world)
-    {
+    private void hop(World world) {
         final net.runelite.api.World rsWorld = client.createWorld();
         rsWorld.setActivity(world.getActivity());
         rsWorld.setAddress(world.getAddress());
@@ -476,8 +423,7 @@ public class BreakHandlerPlugin extends Plugin
         client.changeWorld(rsWorld);
     }
 
-    private EnumSet<WorldRegion> badRegions()
-    {
+    private EnumSet<WorldRegion> badRegions() {
         boolean disableUs = configManager.getBooleanOrDefault(Property.DISABLE_REGION_US.key(),
                 false);
         boolean disableUk = configManager.getBooleanOrDefault(Property.DISABLE_REGION_UK.key(),
@@ -489,31 +435,26 @@ public class BreakHandlerPlugin extends Plugin
 
         EnumSet<WorldRegion> regions = EnumSet.noneOf(WorldRegion.class);
 
-        if (disableUs)
-        {
+        if (disableUs) {
             regions.add(WorldRegion.UNITED_STATES_OF_AMERICA);
         }
 
-        if (disableUk)
-        {
+        if (disableUk) {
             regions.add(WorldRegion.UNITED_KINGDOM);
         }
 
-        if (disableDe)
-        {
+        if (disableDe) {
             regions.add(WorldRegion.GERMANY);
         }
 
-        if (disableAu)
-        {
+        if (disableAu) {
             regions.add(WorldRegion.AUSTRALIA);
         }
 
         return regions;
     }
 
-    private EnumSet<WorldType> badTypes()
-    {
+    private EnumSet<WorldType> badTypes() {
         boolean f2pOnly = configManager.getBooleanOrDefault(Property.F2P_ONLY.key(),
                 false);
 
@@ -528,31 +469,26 @@ public class BreakHandlerPlugin extends Plugin
                 WorldType.FRESH_START_WORLD, WorldType.SEASONAL, WorldType.DEADMAN,
                 WorldType.QUEST_SPEEDRUNNING, WorldType.PVP_ARENA, WorldType.PVP);
 
-        if (f2pOnly)
-        {
+        if (f2pOnly) {
             types.add(WorldType.MEMBERS);
         }
 
-        if (disableHighRisk)
-        {
+        if (disableHighRisk) {
             types.add(WorldType.HIGH_RISK);
         }
 
-        if (disableSkillTotal)
-        {
+        if (disableSkillTotal) {
             types.add(WorldType.SKILL_TOTAL);
         }
 
-        if (disableLms)
-        {
+        if (disableLms) {
             types.add(WorldType.LAST_MAN_STANDING);
         }
 
         return types;
     }
 
-    private enum State
-    {
+    private enum State {
         IDLE,
         WAITING_TO_LOGOUT,
         LOGOUT,

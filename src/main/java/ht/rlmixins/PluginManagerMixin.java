@@ -20,6 +20,7 @@ public class PluginManagerMixin {
                         add("net.runelite.client.plugins.config");
                         add("net.runelite.client.plugins.lowmemory");
                         add("net.runelite.client.plugins.loginscreen");
+                        add("ht.heist.plugins");
                 }
         };
 
